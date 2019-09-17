@@ -21,3 +21,15 @@ func InitDB() (err error) {
 	db.SetConnMaxLifetime(60)
 	return
 }
+
+func queryOneInfo(tableName,fieldName,id string)  {
+	sql := fmt.Sprintf("select * from ? where ?=?")
+	// TODO,根据tablename确定
+	var u user
+	err := db.Get(&u, sql, tableName,fieldName,id)
+	if err != nil {
+		fmt.Printf("get failed, err:%v\n", err)
+		return
+	}
+	fmt.Printf("id:%d name:%s age:%d\n", u.ID, u.Name, u.Age)
+}
