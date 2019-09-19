@@ -78,5 +78,12 @@ create table `person_info`(
     `nick_name` varchar(50),
     primary key (`id`) using btree,
     CONSTRAINT`person_info_ibfk_1`FOREIGNKEY(`id`)REFERENCES`person` (`id`)
-)engine=InnoDB auto_increment=6 default charset=utf8mb4 row_format=dynamic;
+)engine=InnoDB default charset=utf8mb4 row_format=dynamic;
 
+
+create table `follower`(
+    `id` bigint(20) not null auto_increment,
+    `Follwed_id` varchar(128),
+    primary key (`id`) using btree,
+    CONSTRAINT`follower_ibfk_1`FOREIGNKEY(`Follwed_id`)REFERENCES`person` (`id`)
+)engine=InnoDB default charset=utf8mb4 row_format=dynamic;

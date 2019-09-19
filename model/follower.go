@@ -1,6 +1,6 @@
 package model
 
 type Follower struct {
-	ID  int  `json:"id"`
-	Follw_id int  `json:"follw_id"`
+	ID  int  `json:"id"` // 粉丝id
+	Follwed_id int  `json:"follwed_id"` // 关注的人id
 }

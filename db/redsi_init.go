@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"fmt"
 	"github.com/c479096292/Spinach_blog/config"
 	"github.com/go-redis/redis"
@@ -10,20 +11,21 @@ import (
 var redisdb *redis.Client
 
 // 初始化连接
-func initClient() (err error) {
+func InitRedis()  {
 	redisObj := config.InitRedisConnect()
 	// TODO gaizao wei pool
 	redisdb = redis.NewClient(&redis.Options{
 		Addr:     redisObj.Addr,
-		Password: redisObj.Password,
+		//Password: redisObj.Password,
 		DB:       redisObj.DB,  // use default DB
 	})
-
+	err := errors.New("")
 	_, err = redisdb.Ping().Result()
 	if err != nil {
-		return err
+		config.Info(err)
 	}
-	return nil
+	defer redisdb.Close()
+	fmt.Println("connect redis success!")
 }
 
 func Set(key string, value interface{}, tim int64) (err error) {

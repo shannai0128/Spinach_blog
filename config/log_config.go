@@ -1,15 +1,13 @@
 package config
 
 import (
-	"errors"
 	"fmt"
+	"github.com/astaxie/beego/config"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"reflect"
 	"runtime"
-	"strings"
 	"time"
 )
 
@@ -17,6 +15,7 @@ type Settings struct {
 	FileName string
 	FilePath string
 	PrefixUrl string
+	LogSaveName string
 	LogSavePath string
 	LogMaxSize int
 }
@@ -37,72 +36,49 @@ const (
 	FATAL
 )
 
-func InitConfigInfo(fileName string, settings interface{}) (error) {
-	typ := reflect.TypeOf(settings)
-	val := reflect.ValueOf(settings)
+func InitLogger(logSaveName, logSavePath string) (err error) {
+	logSaveName = logSaveName +time.Now().Format("20060102")+".log"
+	_, err =os.Stat(logSavePath+logSaveName)
+	if err == nil{
+		fmt.Println("Log directory is normal")
+	}
+	if os.IsNotExist(err){
+		fmt.Println("Log directory is not exist, start create...")
+		err = os.Mkdir(logSavePath,os.ModePerm)
+		if err != nil{
+			fmt.Printf("create log directory error: %s",err)
+		}
+		err = ioutil.WriteFile(logSavePath+logSaveName,nil,os.ModePerm)
+		if err != nil{
+			fmt.Printf("create log file error: %s",err)
+		}
+	}
+	file, err :=os.Open(logSavePath+logSaveName)
+	if err !=nil{
+		fmt.Printf("open %s error: %s", logSavePath+logSaveName,err)
+	}
+	logger =log.New(file,"",log.LstdFlags)
+	return
+}
 
-	// grammar check
-	if typ.Kind() != reflect.Ptr{
-		err := errors.New("a point object is required")
+func ParseConfigInfo() error { // "conf/"+"app.ini"
+	conf, err :=config.NewConfig("ini","conf/app.ini")
+	if err!=nil{
+		err = fmt.Errorf("open config file failed, error:%s", err)
 		return err
 	}
+	logSavePath := conf.String("app::LogSavePath")
 
-	if typ.Elem().Kind() != reflect.Struct{
-		err := errors.New("the point object's item need to be struct obj")
-		return err
-	}
+	logSaveName := conf.String("app::LogSaveName")
 
-	data, err := ioutil.ReadFile(fileName)
-	if err != nil{
-		err_info := fmt.Sprintf("open %s failed, %s", fileName,err)
-		err = errors.New(err_info)
-		return err
-	}
-	lineSlice := strings.Split(string(data), "\n")
-
-	for index, line := range lineSlice{
-		line = strings.TrimSpace(line)
-		if len(line) == 0 || strings.HasPrefix(line, "#"){
-			continue
-		}
-
-		equalIndex := strings.Index(line,"=")
-		if equalIndex == -1{
-			err = fmt.Errorf("%d line grammar error", index+1)
-			return err
-		}
-
-		key := line[:equalIndex]
-		value := line[equalIndex+1:]
-		key = strings.TrimSpace(key)
-		value = strings.TrimSpace(value)
-
-		if len(key) == 0{
-			err = fmt.Errorf("%d line grammar error", index+1)
-			return err
-		}
-
-		// assign value
-		for i :=0;i<typ.Elem().NumField(); i++{
-			filed := typ.Elem().Field(i)
-			// TODO
-			fmt.Println(filed)
-		}
-	}
+	err = InitLogger(logSaveName, logSavePath)
 	return err
 }
 
-func InitLogger(filename, filepath string)  {
-	filename = filename +time.Now().Format("20060102")
-	file, err :=os.Open(filepath+filename)
-	if err !=nil{
-		fmt.Printf("open %s error: %s", filepath+filename,err)
-	}
-	logger =log.New(file,"",log.LstdFlags)
-}
 
 func Debug(v ...interface{})  {
 	setPrefix(DEBUG)
+	logger.Println(v)
 }
 
 func Info(v ...interface{}) {

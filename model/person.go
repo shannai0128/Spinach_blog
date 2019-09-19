@@ -8,7 +8,7 @@ import (
 type Person struct {
 	BaseModel
 	ID           int
-	PersonName     string  //用户名唯一
+	PersonName     string
 	IdCard		string
 	PersonInfoID   uint     `json:"person_infoid"`
 	PassWord     string `json:"password"`        //sha1
@@ -17,7 +17,4 @@ type Person struct {
 	LoginIP      sql.NullString
 	LoginTime    time.Time
 	IsActive     int      `json:"is_active"` //0可用 1禁用
-	Article      []Article
-	FriendlyLink []FriendlyLink
-	CategoryItem []CategoryItem
 }
