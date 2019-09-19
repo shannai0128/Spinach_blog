@@ -2,13 +2,15 @@ package db
 
 import (
 	"fmt"
+	"github.com/c479096292/Spinach_blog/app"
 	"github.com/c479096292/Spinach_blog/config"
+	"github.com/c479096292/Spinach_blog/model"
 	"github.com/jmoiron/sqlx"
 )
 
 var db *sqlx.DB
 
-func InitDB() (err error) {
+func InitDB(app *app.App) (err error) {
 	dbobj := config.InitDBConnect()
 	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s",dbobj.DBUser,dbobj.DBPasswd,dbobj.DBName)
 	// 也可以使用MustConnect连接不成功就panic
@@ -22,14 +24,15 @@ func InitDB() (err error) {
 	return
 }
 
-func queryOneInfo(tableName,fieldName,id string)  {
+
+func queryOneInfo(tableName,fieldName string,id int)  {
 	sql := fmt.Sprintf("select * from ? where ?=?")
 	// TODO,根据tablename确定
-	var u user
-	err := db.Get(&u, sql, tableName,fieldName,id)
+	var p model.Person
+	err := db.Get(&p, sql, tableName,fieldName,id)
 	if err != nil {
 		fmt.Printf("get failed, err:%v\n", err)
 		return
 	}
-	fmt.Printf("id:%d name:%s age:%d\n", u.ID, u.Name, u.Age)
+	fmt.Printf("id:%d name:%s age:%d\n", p.ID, p.Name, p.Age)
 }
