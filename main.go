@@ -1,22 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"github.com/c479096292/Spinach_blog/config"
 	"github.com/c479096292/Spinach_blog/db"
+	"github.com/c479096292/Spinach_blog/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	err := config.ParseConfigInfo()
-	if err != nil{
-		fmt.Printf("init error")
-	}
+	file := config.ParseConfigInfo(2)
+
+	go utils.CheckLogSize(file) // 日志监控
+
 	db.InitDB()
 	db.InitRedis()
-
-
+	//go utils.CheckLogSize()
 	// 创建一个默认的路由引擎
+
 	r := gin.Default()
 
 
@@ -29,7 +29,7 @@ func main() {
 		})
 	})
 	// 启动HTTP服务，默认在0.0.0.0:8080启动服务
-	r.Run()
+	r.Run(":9000")
 
 
 }

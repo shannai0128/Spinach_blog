@@ -22,9 +22,16 @@ type Settings struct {
 
 type Level int
 
+type  Conf struct {
+	LogSavePath string
+	LogSaveName string
+	LogMaxSize string
+}
+
 var (
+	ConfObj Conf
 	logPrefix = ""
-	logger  *log.Logger
+	Logger  *log.Logger
 	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
 )
 
@@ -36,8 +43,25 @@ const (
 	FATAL
 )
 
-func InitLogger(logSaveName, logSavePath string) (err error) {
-	logSaveName = logSaveName +time.Now().Format("20060102")+".log"
+// 获取配置信息
+func init()  {
+	conf, err :=config.NewConfig("ini","conf/app.ini")
+	if err!=nil{
+		err = fmt.Errorf("open config file failed, error:%s", err)
+		fmt.Println(err)
+	}
+	logSavePath := conf.String("app::LogSavePath")
+	logSaveName := conf.String("app::LogSaveName")
+	logMaxSize  := conf.String("app::LogMaxSize")
+	ConfObj.LogMaxSize = logMaxSize
+	ConfObj.LogSaveName = logSaveName
+	ConfObj.LogSavePath = logSavePath
+	fmt.Println("wo zhixing le")
+}
+
+// 初始化logger
+func InitLogger(logSaveName, logSavePath string) (file *os.File,err error) {
+	logSaveName = logSaveName +time.Now().Format("2006010215:04")+".log"
 	_, err =os.Stat(logSavePath+logSaveName)
 	if err == nil{
 		fmt.Println("Log directory is normal")
@@ -46,61 +70,38 @@ func InitLogger(logSaveName, logSavePath string) (err error) {
 		fmt.Println("Log directory is not exist, start create...")
 		err = os.Mkdir(logSavePath,os.ModePerm)
 		if err != nil{
-			fmt.Printf("create log directory error: %s",err)
+			fmt.Println(err)
 		}
 		err = ioutil.WriteFile(logSavePath+logSaveName,nil,os.ModePerm)
 		if err != nil{
 			fmt.Printf("create log file error: %s",err)
 		}
 	}
-	file, err :=os.Open(logSavePath+logSaveName)
+	file, err =os.OpenFile(logSavePath+logSaveName,os.O_RDWR|os.O_APPEND,os.ModePerm)
 	if err !=nil{
 		fmt.Printf("open %s error: %s", logSavePath+logSaveName,err)
 	}
-	logger =log.New(file,"",log.LstdFlags)
-	return
+	Logger =log.New(file,"",log.LstdFlags)
+	return file ,nil
 }
 
-func ParseConfigInfo() error { // "conf/"+"app.ini"
-	conf, err :=config.NewConfig("ini","conf/app.ini")
-	if err!=nil{
-		err = fmt.Errorf("open config file failed, error:%s", err)
-		return err
+// 日志文件句柄
+func LogFileHandle() (file *os.File) {
+	logSaveName := ConfObj.LogSaveName +time.Now().Format("2006010215:04")+".log"
+	err := ioutil.WriteFile(ConfObj.LogSavePath+logSaveName,nil,os.ModePerm)
+	if err != nil{
+		fmt.Printf("create log file error: %s",err)
 	}
-	logSavePath := conf.String("app::LogSavePath")
-
-	logSaveName := conf.String("app::LogSaveName")
-
-	err = InitLogger(logSaveName, logSavePath)
-	return err
+	file, err =os.OpenFile(ConfObj.LogSavePath+logSaveName,os.O_RDWR|os.O_APPEND,os.ModePerm)
+	if err !=nil{
+		fmt.Printf("open %s error: %s", ConfObj.LogSavePath+logSaveName,err)
+	}
+	Logger =log.New(file,"",log.LstdFlags)
+	fmt.Println("Jubing run....")
+	return file
 }
 
-
-func Debug(v ...interface{})  {
-	setPrefix(DEBUG)
-	logger.Println(v)
-}
-
-func Info(v ...interface{}) {
-	setPrefix(INFO)
-	logger.Println(v)
-}
-
-func Warn(v ...interface{}) {
-	setPrefix(WARNING)
-	logger.Println(v)
-}
-
-func Error(v ...interface{}) {
-	setPrefix(ERROR)
-	logger.Println(v)
-}
-
-func Fatal(v ...interface{}) {
-	setPrefix(FATAL)
-	logger.Fatalln(v)
-}
-
+// 日志信息前缀
 func setPrefix(level Level)  {
 	_, file, line, ok := runtime.Caller(2)
 	if ok {
@@ -108,5 +109,46 @@ func setPrefix(level Level)  {
 	}else {
 		logPrefix = fmt.Sprintf("[%s][%s:%d]", levelFlags[level], filepath.Base(file), line)
 	}
-	logger.SetPrefix(logPrefix)
+	Logger.SetPrefix(logPrefix)
 }
+
+// 加载日志
+func ParseConfigInfo(level Level) (file *os.File) { // "conf/"+"app.ini"
+	file,err := InitLogger(ConfObj.LogSaveName, ConfObj.LogSavePath)
+	if err != nil{
+		fmt.Println("Init log error: %s", err)
+	}
+
+	setPrefix(level)
+	return
+}
+
+
+func Debug(v ...interface{})  {
+	setPrefix(DEBUG)
+	Logger.Println(v)
+}
+
+func Info(v ...interface{}) {
+	setPrefix(INFO)
+	fmt.Println("111")
+	Logger.Println(v)
+	fmt.Println("222")
+}
+
+func Warn(v ...interface{}) {
+	setPrefix(WARNING)
+	Logger.Println(v)
+}
+
+func Error(v ...interface{}) {
+	setPrefix(ERROR)
+	Logger.Println(v)
+}
+
+func Fatal(v ...interface{}) {
+	setPrefix(FATAL)
+	Logger.Fatalln(v)
+}
+
+
