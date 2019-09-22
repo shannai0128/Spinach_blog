@@ -14,8 +14,6 @@ func main() {
 
 	db.InitDB()
 	db.InitRedis()
-	//go utils.CheckLogSize()
-	// 创建一个默认的路由引擎
 
 	r := gin.Default()
 
@@ -27,6 +25,5 @@ func main() {
 	})
 	// 启动HTTP服务，默认在0.0.0.0:8080启动服务
 	r.Run(":9000")
-
 
 }

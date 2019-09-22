@@ -5,10 +5,12 @@ import (
 	"github.com/c479096292/Spinach_blog/config"
 	"os"
 	"strconv"
+	"time"
 )
 
 func CheckLogSize(fileObj *os.File)  {
 	for {
+		time.Sleep(10 * time.Second)
 		maxSize, err := strconv.Atoi(config.ConfObj.LogMaxSize)
 		if err != nil{
 			fmt.Println("convert logMaxSize error:" ,err)

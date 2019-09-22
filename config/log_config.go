@@ -61,7 +61,7 @@ func init()  {
 
 // 初始化logger
 func InitLogger(logSaveName, logSavePath string) (file *os.File,err error) {
-	logSaveName = logSaveName +time.Now().Format("2006010215:04")+".log"
+	logSaveName = logSaveName +time.Now().Format("2006010215")+".log"
 	_, err =os.Stat(logSavePath+logSaveName)
 	if err == nil{
 		fmt.Println("Log directory is normal")
@@ -131,9 +131,7 @@ func Debug(v ...interface{})  {
 
 func Info(v ...interface{}) {
 	setPrefix(INFO)
-	fmt.Println("111")
 	Logger.Println(v)
-	fmt.Println("222")
 }
 
 func Warn(v ...interface{}) {

@@ -39,6 +39,7 @@ func GetTableTotal(tableName string) (total int) {
 	return
 }
 
+// 分页
 func GetArticlesPage(pageNum int, pageSize int) ([]*Article, error) {
 	var articles []*Article
 	sqlstr := "select * from article limit (?-1)*?,?"

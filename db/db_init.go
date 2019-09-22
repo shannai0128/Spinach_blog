@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/c479096292/Spinach_blog/config"
-	"github.com/c479096292/Spinach_blog/model"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -29,14 +28,14 @@ func InitDB()  {
 }
 
 
-func queryOneInfo(tableName,fieldName string,id int)  {
-	sql := fmt.Sprintf("select * from ? where ?=?")
-	// TODO,根据tablename确定
-	var p model.Person
-	err := DB.Get(&p, sql, tableName,fieldName,id)
-	if err != nil {
-		fmt.Printf("get failed, err:%v\n", err)
-		return
-	}
-	fmt.Printf("id:%d name:%s\n", p.ID, p.PersonName)
-}
+//func queryOneInfo(tableName,fieldName string,id int)  {
+//	sql := fmt.Sprintf("select * from ? where ?=?")
+//	// TODO,根据tablename确定
+//	var p model.Person
+//	err := DB.Get(&p, sql, tableName,fieldName,id)
+//	if err != nil {
+//		fmt.Printf("get failed, err:%v\n", err)
+//		return
+//	}
+//	fmt.Printf("id:%d name:%s\n", p.ID, p.PersonName)
+//}
