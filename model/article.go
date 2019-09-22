@@ -1,5 +1,11 @@
 package model
 
+import (
+	"fmt"
+	"github.com/c479096292/Spinach_blog/config"
+	"github.com/c479096292/Spinach_blog/db"
+)
+
 type Article struct {
 	ID             uint       `json:"aid"`
 	//CreatedAt      time.Time  `json:"-"`
@@ -21,4 +27,28 @@ type Article struct {
 	Comment_count  int    	  `json:"comment_count"`
 	Praise         int		  `json:"praise"`
 }
+
+// 获取表数据量
+func GetTableTotal(tableName string) (total int) {
+	sqlstr := "select count(*) from ?"
+	err := db.DB.QueryRow(sqlstr,tableName).Scan(&total)
+	if err != nil{
+		err_info :=fmt.Sprintf("Get table %s Total failed, err:%v\n", tableName, err)
+		 config.Error(err_info)
+	}
+	return
+}
+
+func GetArticlesPage(pageNum int, pageSize int) ([]*Article, error) {
+	var articles []*Article
+	sqlstr := "select * from article limit (?-1)*?,?"
+	err := db.DB.Select(articles,sqlstr,pageSize,pageSize)
+	if err != nil{
+		err_info :=fmt.Sprintf("Get article %s paged failed, err:%v\n", err)
+		config.Error(err_info)
+	}
+
+	return articles, nil
+}
+
 
