@@ -13,7 +13,7 @@ func LimitIP() gin.HandlerFunc {
 		request_ip := c.ClientIP()
 		values,err := db.Get(request_ip)
 		if err != nil{
-			err = db.Set(request_ip,0,60)
+			err = db.Set(request_ip,0,config.ConfObj.IpBlackExpire)
 			if err != nil{
 				config.Error(fmt.Sprintf("set %s key error: %s",request_ip,err))
 			}

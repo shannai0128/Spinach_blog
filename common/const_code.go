@@ -3,6 +3,7 @@ package common
 const (
 	SUCCESS        = 200
 	SERVER_ERROR          = 500
+	INVALID_TOKEN = 302
 	INVALID_PARAMS = 400
 
 	ERROR_EXIST_TAG       = 10001

@@ -8,24 +8,22 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"time"
 )
 
-type Settings struct {
+
+type Level int
+
+type  Conf struct {
 	FileName string
 	FilePath string
 	PrefixUrl string
 	LogSaveName string
 	LogSavePath string
-	LogMaxSize int
-}
-
-type Level int
-
-type  Conf struct {
-	LogSavePath string
-	LogSaveName string
 	LogMaxSize string
+	IpBlackExpire int64
+	SecretKey string
 }
 
 var (
@@ -53,10 +51,14 @@ func init()  {
 	logSavePath := conf.String("app::LogSavePath")
 	logSaveName := conf.String("app::LogSaveName")
 	logMaxSize  := conf.String("app::LogMaxSize")
+	IpBlackExpire := conf.String("app::IpBlackExpire")
+	SecretKey := conf.String("app::SecretKey")
 	ConfObj.LogMaxSize = logMaxSize
 	ConfObj.LogSaveName = logSaveName
 	ConfObj.LogSavePath = logSavePath
-	fmt.Println("wo zhixing le")
+	IntIpBlackExpire, err := strconv.ParseInt(IpBlackExpire,10,64)
+	ConfObj.IpBlackExpire = IntIpBlackExpire
+	ConfObj.SecretKey = SecretKey
 }
 
 // 初始化logger
