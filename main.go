@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/c479096292/Spinach_blog/config"
+	"github.com/c479096292/Spinach_blog/controller"
 	"github.com/c479096292/Spinach_blog/db"
 	"github.com/c479096292/Spinach_blog/middleware"
 	"github.com/c479096292/Spinach_blog/utils"
@@ -19,7 +20,10 @@ func main() {
 
 
 	router :=gin.Default()
-	router.Use(middleware.JwtAuth(router))
+	router.GET("/login", func(c *gin.Context) {
+		c.JSON(200,"login index")
+	})
+	//router.Use(middleware.JwtAuth())
 	router.Use(middleware.LimitIP())
 	//v1Group :=router.Group("/v1", v1Index) // 所有v1开头的交给v1Group处理。  v1Index也可不写
 	//{
@@ -28,9 +32,7 @@ func main() {
 	//	v1Group.GET("/sku", v1Sku)
 	//}
 
-	router.GET("/hello", func(c *gin.Context) {
-		c.JSON(200,"demo index")
-	})
+	router.GET("/hello", controller.GetArticleTotal())
 	router.Run(":9000")
 
 }

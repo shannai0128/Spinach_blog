@@ -23,19 +23,7 @@ func InitDB()  {
 	}
 	DB.SetMaxOpenConns(20)
 	DB.SetConnMaxLifetime(60)
-	defer DB.Close()
+
 	fmt.Println("connect mysql success!")
 }
 
-
-//func queryOneInfo(tableName,fieldName string,id int)  {
-//	sql := fmt.Sprintf("select * from ? where ?=?")
-//	// TODO,根据tablename确定
-//	var p model.Person
-//	err := DB.Get(&p, sql, tableName,fieldName,id)
-//	if err != nil {
-//		fmt.Printf("get failed, err:%v\n", err)
-//		return
-//	}
-//	fmt.Printf("id:%d name:%s\n", p.ID, p.PersonName)
-//}

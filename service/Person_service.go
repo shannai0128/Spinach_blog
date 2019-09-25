@@ -8,7 +8,7 @@ import (
 
 type Person struct {
 	ID            int
-	Name 		  string
+	Name 		  string // 表名
 	PersonName     string
 	IdCard		string
 	PersonInfoID   uint

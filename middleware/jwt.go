@@ -8,17 +8,15 @@ import (
 	"net/http"
 )
 
-func JwtAuth(r *gin.Engine) gin.HandlerFunc {
+func JwtAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code int
-		var data utils.Claims
 		code = common.SUCCESS
 		 token := c.DefaultQuery("token", "")
 		 if token == ""{
 		 	code = common.INVALID_TOKEN
 		 }else {
-			claims, err:= utils.ParseToken(token)
-			data = *claims
+			_, err:= utils.ParseToken(token)
 			if err != nil{
 				switch err.(jwt.ValidationError).Errors {
 				case jwt.ValidationErrorExpired:
@@ -30,15 +28,9 @@ func JwtAuth(r *gin.Engine) gin.HandlerFunc {
 
 		 }
 		 if code != common.SUCCESS{
-
-		 	c.JSON(http.StatusUnauthorized, gin.H{
-		 		"code": code,
-		 		"msg": common.GetMsg(code),
-		 		"data": data.Username,
-			})
-		 	c.Request.URL.Path = "/login"
-		 	r.HandleContext(c)
-			 return
+		 	c.Redirect(http.StatusMovedPermanently,"/login")
+		 	c.Abort()
+			return
 		 }
 		 c.Next()
 	}
