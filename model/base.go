@@ -1,11 +1,6 @@
 package model
 
-import (
-	"time"
-)
-
 type BaseModel struct {
-	CreateTime time.Time `json:"create_time"`
-	UpdatedTime time.Time `json:"updated_time"`
+	Create_time string `json:"create_time"`
+	Update_time string `json:"updated_time"`
 }
-

@@ -24,6 +24,8 @@ type  Conf struct {
 	LogMaxSize string
 	IpBlackExpire int64
 	SecretKey string
+	SensitiveWords []string
+
 }
 
 var (
@@ -53,6 +55,7 @@ func init()  {
 	logMaxSize  := conf.String("app::LogMaxSize")
 	IpBlackExpire := conf.String("app::IpBlackExpire")
 	SecretKey := conf.String("app::SecretKey")
+	ConfObj.SensitiveWords = conf.Strings("server::SensitiveWords")
 	ConfObj.LogMaxSize = logMaxSize
 	ConfObj.LogSaveName = logSaveName
 	ConfObj.LogSavePath = logSavePath

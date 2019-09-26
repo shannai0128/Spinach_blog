@@ -10,7 +10,7 @@ create table `article`(
     `title` varchar(256) not null,
     `view_count` int(255),
     `person_name` varchar(256) not null,
-    `status` int(10) default 1,
+    `status` int(10) default 0,
     `violat_reason`  text,
     `summary` varchar(255) not null,
     `origin`  int,

@@ -33,6 +33,10 @@ func main() {
 	//}
 
 	router.GET("/hello", controller.GetArticleTotal())
+	router.POST("/paged", controller.GetArticlePaged())
+	router.POST("/articles", controller.GetArticlesByPersonID())
+	router.POST("/find", controller.FindArticleByTitle())
+	router.POST("/new", controller.CreateNewArticle())
 	router.Run(":9000")
 
 }
