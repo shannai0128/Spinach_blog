@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/c479096292/Spinach_blog/common"
 	"github.com/c479096292/Spinach_blog/config"
 	"github.com/c479096292/Spinach_blog/service"
 	"github.com/c479096292/Spinach_blog/utils"
@@ -8,12 +9,10 @@ import (
 )
 
 
-func GetArticleTotal() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func GetArticleTotal(c *gin.Context) {
 		articleObj := service.Article{Name:"article"}
 		c.JSON(200,articleObj.Count())
 		//return articleObj.Count()
-	}
 }
 
 func GetArticlePaged() gin.HandlerFunc {
@@ -42,12 +41,14 @@ func FindArticleByTitle() gin.HandlerFunc {
 		title := c.PostForm("title")
 		articleObj := service.Article{}
 		result_obj := articleObj.FindArticleByTitle(title)
-		result, ok := result_obj.(string)
+		_, ok := result_obj.(string)
 		if ok {
-			c.JSON(200, result)
+			res_obj := common.ErrParams
+			res_obj.ApiFailedResponse(c)
 			return
 		}
-		c.JSON(200, result_obj)
+		res_obj := common.Response{HttpCode:200, Data:result_obj}
+		res_obj.ApiResponse(c)
 		return
 	}
 }
@@ -66,8 +67,6 @@ func CreateNewArticle() gin.HandlerFunc {
 		Summary := c.PostForm("summary")
 		Origin := c.PostForm("origin")
 		int_Origin := utils.ChangeAtoi(Origin)
-		Praise := c.PostForm("praise")
-		int_Praise := utils.ChangeAtoi(Praise)
 
 		article := service.Article{
 			Category_id: uint_Category_id,
@@ -77,7 +76,49 @@ func CreateNewArticle() gin.HandlerFunc {
 			Person_name: Person_name,
 			Summary: Summary,
 			Origin: int_Origin,
-			Praise: int_Praise,
+		}
+		err := article.InsertNewArticle()
+		if err != nil{
+			config.Error(err)
+
+			return
+		}
+		res_obj := common.Response{HttpCode:200}
+		res_obj.ApiResponse(c)
+		return
+	}
+}
+
+// 修改文章
+func EditArticle() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		aid := c.PostForm("aid")
+		int_aid := utils.ChangeAtoi(aid)
+		uint_aid := uint(int_aid)
+
+		Category_id := c.PostForm("category_id")
+		int_Category_id := utils.ChangeAtoi(Category_id)
+		uint_Category_id := uint(int_Category_id)
+
+		Content := c.PostForm("content")
+		Title := c.PostForm("title")
+		View_count := c.PostForm("view_count")
+		int_View_count := utils.ChangeAtoi(View_count)
+
+		Person_name := c.PostForm("person_name")
+		Summary := c.PostForm("summary")
+		Origin := c.PostForm("origin")
+		int_Origin := utils.ChangeAtoi(Origin)
+
+		article := service.Article{
+			ID: uint_aid,
+			Category_id: uint_Category_id,
+			Content: Content,
+			Title: Title,
+			View_count: int_View_count,
+			Person_name: Person_name,
+			Summary: Summary,
+			Origin: int_Origin,
 		}
 		err := article.InsertNewArticle()
 		if err != nil{
@@ -86,4 +127,16 @@ func CreateNewArticle() gin.HandlerFunc {
 		}
 		return
 	}
+}
+
+func DelArticle(c *gin.Context)  {
+	aid := c.PostForm("aid")
+	int_aid := utils.ChangeAtoi(aid)
+	article := service.Article{}
+	err := article.DelArticle(int_aid)
+	if err != nil{
+		config.Error(err)
+		return
+	}
+	return
 }

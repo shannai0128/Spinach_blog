@@ -73,11 +73,35 @@ func FindArticleByTitle(title string) ([]*Article, error) {
 	return articles, nil
 }
 
+// 添加新文章
 func InsertNewArticle(a Article) (error) {
-	sqlstr := "insert into article(category_id,content,title,view_count,person_name,summary,origin,praise) value(?,?,?,?,?,?,?,?);"
-	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin, a.Praise)
+	sqlstr := "insert into article(category_id,content,title,view_count,person_name,summary,origin) value(?,?,?,?,?,?,?);"
+	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin)
 	if err != nil{
 		err_info :=fmt.Sprintf("create new article failed, err:%s\n", err)
+		config.Error(err_info)
+		return err
+	}
+	return nil
+}
+
+// 修改文章
+func EditArticle(a Article) error {
+	sqlstr := "update article set category_id=?,content=?,title=?,view_count=?,person_name=?,summary=?,origin=? where id=?;"
+	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin, a.ID)
+	if err != nil{
+		err_info :=fmt.Sprintf("edit the article failed, err:%s\n", err)
+		config.Error(err_info)
+		return err
+	}
+	return nil
+}
+
+func DelArticle(aid int) error {
+	sqlstr := "delete from article where id=?;"
+	_ , err := db.DB.Exec(sqlstr, aid)
+	if err != nil{
+		err_info :=fmt.Sprintf("delete article failed, err:%s\n", err)
 		config.Error(err_info)
 		return err
 	}

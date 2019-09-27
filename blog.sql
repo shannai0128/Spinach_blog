@@ -68,8 +68,10 @@ create table `person_info`(
     `person_email` varchar(128),
     `person_addr` varchar(255),
     `nick_name` varchar(50),
+    `mobile` varchar(50),
     primary key (`id`) using btree,
-    foreign key (`id`) REFERENCES `person` (`id`)
+    foreign key (`id`) REFERENCES `person` (`id`),
+    unique key `idx_mobile` (`mobile`) using btree
 )engine=InnoDB default charset=utf8mb4 row_format=dynamic;
 
 

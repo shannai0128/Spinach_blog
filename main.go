@@ -9,6 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func lst(c *gin.Context)  {
+	c.JSON(200, "dasdsa")
+}
 
 func main() {
 	file := config.ParseConfigInfo(2)
@@ -32,11 +35,13 @@ func main() {
 	//	v1Group.GET("/sku", v1Sku)
 	//}
 
-	router.GET("/hello", controller.GetArticleTotal())
+	router.GET("/hello", controller.GetArticleTotal)
 	router.POST("/paged", controller.GetArticlePaged())
 	router.POST("/articles", controller.GetArticlesByPersonID())
 	router.POST("/find", controller.FindArticleByTitle())
 	router.POST("/new", controller.CreateNewArticle())
+	router.POST("/edit", controller.EditArticle())
+	router.POST("/delete", controller.DelArticle)
 	router.Run(":9000")
 
 }

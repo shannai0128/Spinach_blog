@@ -10,6 +10,7 @@ import (
 )
 
 type Article struct {
+	ID              uint   `json:"aid"`
 	Name			string
 	Person_name         string     `json:"person_name"`
 	Category_id 	   uint       `json:"category_id"`
@@ -56,6 +57,7 @@ func (a *Article) FindArticleByTitle(title string) (interface{})  {
 	return articleObj
 }
 
+// 新建文章
 func (a *Article) InsertNewArticle() error {
 	//article := map[string]interface{}{
 	//	"category_id":          a.Category_id,
@@ -80,9 +82,36 @@ func (a *Article) InsertNewArticle() error {
 		Person_name:a.Person_name,
 		Summary:a.Summary,
 		Origin:a.Origin,
-		Praise:a.Praise,
 	}
 	err := model.InsertNewArticle(article)
+	if err !=nil {
+		return err
+	}
+	return nil
+}
+
+// 修改文章
+func (a *Article) EditArticle() error {
+	article := model.Article{
+		ID: a.ID,
+		Category_id:a.Category_id,
+		Content:a.Content,
+		Title:a.Title,
+		View_count:a.View_count,
+		Person_name:a.Person_name,
+		Summary:a.Summary,
+		Origin:a.Origin,
+	}
+	err := model.EditArticle(article)
+	if err !=nil {
+		return err
+	}
+	return nil
+}
+
+// 删除文章
+func (a *Article) DelArticle(aid int) error {
+	err := model.DelArticle(aid)
 	if err !=nil {
 		return err
 	}
