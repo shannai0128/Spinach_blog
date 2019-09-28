@@ -14,12 +14,13 @@ type Response struct {
 
 func (r *Response) ApiResponse(c *gin.Context) {
 	c.JSON(r.HttpCode, Response{
+		HttpCode:r.HttpCode,
 		Data: r.Data,
 	})
 }
 
 func (r *Response) ApiFailedResponse(c *gin.Context) {
-	c.JSON(r.ErrCode, Response{
+	c.JSON(r.HttpCode, Response{
 		ErrCode: r.ErrCode,
 		Msg: GetMsg(r.ErrCode),
 		Data: r.Data,
@@ -28,6 +29,7 @@ func (r *Response) ApiFailedResponse(c *gin.Context) {
 
 func newApiError(errCode int, data interface{}) *Response {
 	return &Response{
+		HttpCode:errCode,
 		ErrCode:errCode,
 		Msg:GetMsg(errCode),
 		Data:data,

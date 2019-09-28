@@ -102,7 +102,7 @@ func LogFileHandle() (file *os.File) {
 		fmt.Printf("open %s error: %s", ConfObj.LogSavePath+logSaveName,err)
 	}
 	Logger =log.New(file,"",log.LstdFlags)
-	fmt.Println("Jubing run....")
+	fmt.Println("file handle run....")
 	return file
 }
 

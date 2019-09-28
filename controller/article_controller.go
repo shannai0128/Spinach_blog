@@ -10,9 +10,10 @@ import (
 
 
 func GetArticleTotal(c *gin.Context) {
-		articleObj := service.Article{Name:"article"}
-		c.JSON(200,articleObj.Count())
-		//return articleObj.Count()
+		article := service.Article{Name:"article"}
+		articles_count := article.Count()
+		res_obj := common.Response{HttpCode:common.SUCCESS,Data:articles_count}
+		res_obj.ApiResponse(c)
 }
 
 func GetArticlePaged() gin.HandlerFunc {
@@ -21,8 +22,10 @@ func GetArticlePaged() gin.HandlerFunc {
 		pageSize := c.PostForm("pageSize")
 		int_pageNum := utils.ChangeAtoi(pageNum)
 		int_pageSize := utils.ChangeAtoi(pageSize)
-		articleObj := service.Article{}
-		c.JSON(200, articleObj.ArticlesPaged(int_pageNum,int_pageSize))
+		article := service.Article{}
+		article_data := article.ArticlesPaged(int_pageNum,int_pageSize)
+		res_obj := common.Response{HttpCode:common.SUCCESS,Data:article_data}
+		res_obj.ApiResponse(c)
 	}
 }
 
@@ -30,9 +33,10 @@ func GetArticlesByPersonID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.PostForm("id")
 		int_id := utils.ChangeAtoi(id)
-
-		articleObj := service.Article{}
-		c.JSON(200, articleObj.GetArticlesByPersonID(int_id))
+		article := service.Article{}
+		article_data := article.GetArticlesByPersonID(int_id)
+		res_obj := common.Response{HttpCode:common.SUCCESS,Data:article_data}
+		res_obj.ApiResponse(c)
 	}
 }
 
@@ -47,7 +51,7 @@ func FindArticleByTitle() gin.HandlerFunc {
 			res_obj.ApiFailedResponse(c)
 			return
 		}
-		res_obj := common.Response{HttpCode:200, Data:result_obj}
+		res_obj := common.Response{HttpCode:common.SUCCESS, Data:result_obj}
 		res_obj.ApiResponse(c)
 		return
 	}
@@ -78,12 +82,14 @@ func CreateNewArticle() gin.HandlerFunc {
 			Origin: int_Origin,
 		}
 		err := article.InsertNewArticle()
+		res_obj := common.Response{}
 		if err != nil{
 			config.Error(err)
-
+			res_obj.ErrCode = common.ERROR_ADD_ARTICLE_FAIL
+			res_obj.ApiFailedResponse(c)
 			return
 		}
-		res_obj := common.Response{HttpCode:200}
+		res_obj.HttpCode = common.SUCCESS
 		res_obj.ApiResponse(c)
 		return
 	}
@@ -121,10 +127,15 @@ func EditArticle() gin.HandlerFunc {
 			Origin: int_Origin,
 		}
 		err := article.InsertNewArticle()
+		res_obj := common.Response{}
 		if err != nil{
 			config.Error(err)
+			res_obj.ErrCode = common.ERROR_EDIT_ARTICLE_FAIL
+			res_obj.ApiFailedResponse(c)
 			return
 		}
+		res_obj.HttpCode = common.SUCCESS
+		res_obj.ApiResponse(c)
 		return
 	}
 }
@@ -134,9 +145,14 @@ func DelArticle(c *gin.Context)  {
 	int_aid := utils.ChangeAtoi(aid)
 	article := service.Article{}
 	err := article.DelArticle(int_aid)
+	res_obj := common.Response{}
 	if err != nil{
 		config.Error(err)
+		res_obj.ErrCode = common.ERROR_DELETE_ARTICLE_FAIL
+		res_obj.ApiFailedResponse(c)
 		return
 	}
+	res_obj.HttpCode = common.SUCCESS
+	res_obj.ApiResponse(c)
 	return
 }

@@ -2,18 +2,21 @@ package service
 
 import (
 	"database/sql"
+	"fmt"
+	"github.com/c479096292/Spinach_blog/config"
 	"github.com/c479096292/Spinach_blog/model"
+	"github.com/c479096292/Spinach_blog/utils"
 	"time"
 )
 
 type Person struct {
 	ID            int
-	Name 		  string // 表名
+	Name 		  string
 	PersonName     string
 	IdCard		string
 	PersonInfoID   uint
 	PassWord     string
-	gender		 int
+	Gender		 int
 	article_id   int
 	LoginIP      sql.NullString
 	LoginTime    time.Time
@@ -24,3 +27,50 @@ func (p *Person) Count() (int) {
 	return model.GetTableTotal(p.Name)
 }
 
+func (p *Person) GetPersonPage(pageNum int, pageSize int) ([]*model.Person) {
+	//var persons [] model.Person
+	persons, err := model.GetPersonPage(pageNum, pageSize)
+	if err != nil{
+		if err != nil{
+			config.Error(fmt.Sprintf("query person paged error: %s\n",err))
+		}
+	}
+	return persons
+}
+
+func (p *Person) FindPersonByID(id int) (model.Person) {
+	persons, err := model.FindPersonByID(id)
+	if err != nil{
+		if err != nil{
+			config.Error(fmt.Sprintf("search id:%d person error: %s\n",id, err))
+		}
+	}
+	return persons
+}
+
+func (p *Person) AddtNewPerson() error {
+	p.PassWord = utils.EncodeMD5(p.PassWord)
+
+	person := model.Person{
+		Person_name:p.PersonName,
+		Id_card:p.IdCard,
+		Password:p.PassWord,
+		Login_ip:p.LoginIP,
+		Gender:p.Gender,
+	}
+	err := model.AddtPersonInfo(person)
+	if err !=nil {
+		config.Error(fmt.Sprintf("add person error: %s\n",err))
+		return err
+	}
+	return nil
+}
+
+func (p *Person) DelPersonByID(id int) error {
+	err := model.DelPersonByID(id)
+	if err !=nil {
+		config.Error(fmt.Sprintf("delete person error: %s\n",err))
+		return err
+	}
+	return nil
+}

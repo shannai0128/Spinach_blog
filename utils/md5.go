@@ -6,7 +6,7 @@ import (
 )
 
 func EncodeMD5(val string) string {
-	m :=md5.New() // 返回一个用于md5校验的接口
-	m.Write([]byte(val)) // 写入要加密的数据
+	m :=md5.New()
+	m.Write([]byte(val))
 	return hex.EncodeToString(m.Sum(nil)) // 将加密后的byte转为string
 }

@@ -32,6 +32,7 @@ func GetTableTotal(tableName string) (total int) {
 	if err != nil{
 		err_info :=fmt.Sprintf("Get table %s Total failed, err:%v\n", tableName, err)
 		 config.Error(err_info)
+		panic(err)
 	}
 	return
 }
@@ -45,6 +46,7 @@ func GetArticlesPage(pageNum int, pageSize int) ([]*Article, error) {
 	if err != nil{
 		err_info :=fmt.Sprintf("Get article page failed, err:%s\n", err)
 		config.Error(err_info)
+		panic(err)
 	}
 	return articles, nil
 }
@@ -57,6 +59,7 @@ func GetArticlesByPersonID(id int) ([]*Article, error) {
 	if err != nil{
 		err_info :=fmt.Sprintf("Get user articles failed, err:%s\n", err)
 		config.Error(err_info)
+		panic(err)
 	}
 	return articles, nil
 }
@@ -69,6 +72,7 @@ func FindArticleByTitle(title string) ([]*Article, error) {
 	if err != nil{
 		err_info :=fmt.Sprintf("find the %s article failed, err:%s\n", title, err)
 		config.Error(err_info)
+		panic(err)
 	}
 	return articles, nil
 }
@@ -80,7 +84,7 @@ func InsertNewArticle(a Article) (error) {
 	if err != nil{
 		err_info :=fmt.Sprintf("create new article failed, err:%s\n", err)
 		config.Error(err_info)
-		return err
+		panic(err)
 	}
 	return nil
 }
@@ -92,7 +96,7 @@ func EditArticle(a Article) error {
 	if err != nil{
 		err_info :=fmt.Sprintf("edit the article failed, err:%s\n", err)
 		config.Error(err_info)
-		return err
+		panic(err)
 	}
 	return nil
 }
@@ -103,7 +107,7 @@ func DelArticle(aid int) error {
 	if err != nil{
 		err_info :=fmt.Sprintf("delete article failed, err:%s\n", err)
 		config.Error(err_info)
-		return err
+		panic(err)
 	}
 	return nil
 }
