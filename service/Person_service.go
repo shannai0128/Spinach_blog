@@ -2,6 +2,7 @@ package service
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/c479096292/Spinach_blog/config"
 	"github.com/c479096292/Spinach_blog/model"
@@ -49,6 +50,16 @@ func (p *Person) FindPersonByID(id int) (model.Person) {
 }
 
 func (p *Person) AddtNewPerson() error {
+	pwd := len(p.PassWord)
+	if pwd < 8 {
+		err_info := errors.New("please check password, make sure password length is greater than 8")
+		return err_info
+	}
+	idCard := len(p.IdCard)
+	if idCard != 18 {
+		err_info := errors.New("please check and input valid idCard")
+		return err_info
+	}
 	p.PassWord = utils.EncodeMD5(p.PassWord)
 
 	person := model.Person{
@@ -71,6 +82,22 @@ func (p *Person) DelPersonByID(id int) error {
 	if err !=nil {
 		config.Error(fmt.Sprintf("delete person error: %s\n",err))
 		return err
+	}
+	return nil
+}
+
+func (p *Person) ModifyPassword(id uint, oldPwd, newPwd string) error {
+	acqPassword, err := model.AcquirePassword(id)
+	oldPassword := utils.EncodeMD5(oldPwd)
+	if oldPassword != acqPassword {
+		return errors.New("password error, please try again")
+	}
+	newPassword := utils.EncodeMD5(newPwd)
+	err = model.UpdatePassword(id,newPassword)
+	if err != nil{
+		err_info :=fmt.Sprintf("Unknow error happend err:%s\n", err)
+		return errors.New(err_info)
+		//panic(err)
 	}
 	return nil
 }

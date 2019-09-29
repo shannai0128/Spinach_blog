@@ -2,41 +2,42 @@ package model
 
 import (
 	"database/sql"
-	"fmt"
-	"github.com/c479096292/Spinach_blog/config"
 	"github.com/c479096292/Spinach_blog/db"
 )
 
 type PersonInfo struct {
 	ID           int
-	Person_email  sql.NullString `json:"person_email"`
-	Person_addr   sql.NullString `json:"person_addr"`
-	Mobile       sql.NullString `json:"mobile"`
-	Nick_name   sql.NullString `json:"nick_name"`
+	Person_email  sql.NullString
+	Person_addr   sql.NullString
+	Mobile       sql.NullString
+	Nick_name   sql.NullString
 	//Fans_count  int  `json:"fans_count"` // 粉丝数
 	//Follower_count int  `json:"follower_count"` // 关注数
 }
 
 
-
-func AddtPersonDetail(p Person) (error) {
-	sqlstr := "insert into person_info(person_name,id_card,password,gender,login_ip) value(?,?,?,?,?);"
-	_ , err := db.DB.Exec(sqlstr, p.Person_name,p.Id_card,p.Password,p.Gender,p.Login_ip)
-	if err != nil{
-		err_info :=fmt.Sprintf("create new article failed, err:%s\n", err)
-		config.Error(err_info)
+func AddtPersonDetail(p PersonInfo) (error) {
+	sqlstr := "insert into person_info(id,Person_email,Person_addr,Mobile,Nick_name) value(?,?,?,?,?);"
+	result , err := db.DB.Exec(sqlstr, p.ID,p.Person_email,p.Person_addr,p.Mobile,p.Nick_name)
+	if err != nil {
+		return err
+	}
+	affect, _ := result.RowsAffected()
+	if affect == 0 {
 		return err
 	}
 	return nil
 }
 
-//func EditPersonInfo(p Person) error {
-//	sqlstr := "update person set category_id=?,content=?,title=?,view_count=?,person_name=?,summary=?,origin=? where id=?;"
-//	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin, a.ID)
-//	if err != nil{
-//		err_info :=fmt.Sprintf("edit the article failed, err:%s\n", err)
-//		config.Error(err_info)
-//		return err
-//	}
-//	return nil
-//}
+func EditPersonInfo(p PersonInfo) error {
+	sqlstr := "update person_info set Person_email=?,Person_addr=?,Mobile=?,Nick_name=? where id=?;"
+	result , err := db.DB.Exec(sqlstr, p.Person_email, p.Person_addr,p.Mobile,p.Nick_name, p.ID)
+	if err != nil{
+		return err
+	}
+	affect, _ := result.RowsAffected()
+	if affect == 0 {
+		return err
+	}
+	return nil
+}

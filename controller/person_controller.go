@@ -43,7 +43,6 @@ func FindPersonByID(c *gin.Context)  {
 }
 
 func AddNewPerson(c *gin.Context)  {
-	// TODO 注册逻辑
 	res_obj := common.Response{}
 	personName := c.PostForm("person_name")
 	idCard := c.PostForm("id_card")
@@ -77,6 +76,7 @@ func AddNewPerson(c *gin.Context)  {
 	}
 	err := person.AddtNewPerson()
 
+	// TODO 注册登录
 	if err != nil{
 		config.Error(err)
 		res_obj.ErrCode = common.ERROR_ADD_USER_FAIL
@@ -98,6 +98,28 @@ func DelPerson(c *gin.Context)  {
 	if err != nil{
 		config.Error(err)
 		res_obj.ErrCode = common.ERROR_ADD_USER_FAIL
+		res_obj.HttpCode = 500
+		res_obj.Data = err.Error()
+		res_obj.ApiFailedResponse(c)
+		return
+	}
+	res_obj.HttpCode = common.SUCCESS
+	res_obj.ApiResponse(c)
+	return
+}
+
+func ModifyPassword(c *gin.Context)  {
+	id := c.PostForm("id")
+	int_id := utils.ChangeAtoi(id)
+	u_int := uint(int_id)
+	oldPassword := c.PostForm("old_password")
+	newPassword := c.PostForm("new_password")
+	person := service.Person{}
+	err := person.ModifyPassword(u_int,oldPassword,newPassword)
+	res_obj := common.Response{}
+	if err != nil{
+		config.Error(err)
+		res_obj.ErrCode = common.ERROR_UPDATE_PASSWORD_FAIL
 		res_obj.HttpCode = 500
 		res_obj.Data = err.Error()
 		res_obj.ApiFailedResponse(c)

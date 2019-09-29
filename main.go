@@ -26,7 +26,7 @@ func main() {
 	router.GET("/login", func(c *gin.Context) {
 		c.JSON(200,"login index")
 	})
-	//router.Use(middleware.JwtAuth())
+	router.Use(middleware.JwtAuth())
 	router.Use(middleware.LimitIP())
 
 	atcGroup := router.Group("/article")
@@ -46,13 +46,15 @@ func main() {
 		userGroup.POST("/paged", controller.GetPersonPage)
 		userGroup.POST("/find", controller.FindPersonByID)
 		userGroup.POST("/del", controller.DelPerson)
+		userGroup.POST("/pwd", controller.ModifyPassword)
 	}
 	detailGroup := router.Group("/detail")
 	{
-		detailGroup.GET("/total",controller.GetPersonTotal)
-		detailGroup.POST("/new", controller.AddNewPerson)
-		detailGroup.POST("/paged", controller.GetPersonPage)
+		detailGroup.POST("/new", controller.AddPersonInfo)
+		detailGroup.POST("/edit", controller.EditPersonInfo)
+		detailGroup.POST("/vc", controller.VerifyCode)
 	}
+
 	router.Run(":9000")
 
 }

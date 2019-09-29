@@ -24,6 +24,7 @@ type  Conf struct {
 	LogMaxSize string
 	IpBlackExpire int64
 	SecretKey string
+	VerifyCodeExpire int64
 	SensitiveWords []string
 
 }
@@ -54,14 +55,17 @@ func init()  {
 	logSaveName := conf.String("app::LogSaveName")
 	logMaxSize  := conf.String("app::LogMaxSize")
 	IpBlackExpire := conf.String("app::IpBlackExpire")
+	verifyCodeExpire := conf.String("server::verifyCodeExpire")
 	SecretKey := conf.String("app::SecretKey")
 	ConfObj.SensitiveWords = conf.Strings("server::SensitiveWords")
 	ConfObj.LogMaxSize = logMaxSize
 	ConfObj.LogSaveName = logSaveName
 	ConfObj.LogSavePath = logSavePath
 	IntIpBlackExpire, err := strconv.ParseInt(IpBlackExpire,10,64)
+	IntVerifyCodeExpire, err := strconv.ParseInt(verifyCodeExpire,10,64)
 	ConfObj.IpBlackExpire = IntIpBlackExpire
 	ConfObj.SecretKey = SecretKey
+	ConfObj.VerifyCodeExpire = IntVerifyCodeExpire
 }
 
 // 初始化logger

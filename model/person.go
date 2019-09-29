@@ -82,3 +82,24 @@ func DelPersonByID(id int) error {
 	}
 	return nil
 }
+
+func AcquirePassword(id uint) (string, error) {
+	sqlstr := "select password from person where id=?"
+	var oldPassword string
+	err := db.DB.Get(&oldPassword, sqlstr,id)
+	if err != nil{
+		err_info :=fmt.Sprintf("Unknow error happend err:%s\n", err)
+		config.Error(err_info)
+		panic(err)
+	}
+	return oldPassword, nil
+}
+
+func UpdatePassword(id uint, newPassword string) error {
+	sqlstr := "update person set password=? where id=?"
+	_, err := db.DB.Exec(sqlstr,newPassword, id)
+	if err != nil{
+		return errors.New("update password error")
+	}
+	return nil
+}
