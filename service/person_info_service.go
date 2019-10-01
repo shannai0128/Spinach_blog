@@ -27,6 +27,19 @@ func (p *PersonInfo) AddtPersonDetail() error {
 		err_msg := errors.New("please input valid mobile number")
 		return err_msg
 	}
+
+	allMobile, err := model.AcquireAllMobile()
+	if err != nil{
+		config.Error(fmt.Sprintf("acquire all mobile number error: %s", err))
+		panic(err)
+	}
+	for _, item := range allMobile{
+		if item == p.Mobile{
+			err_msg := errors.New("this phone number has been registered")
+			return err_msg
+		}
+	}
+
 	reg, _ :=regexp.Compile("^([a-zA-Z0-9_-]+)@([a-zA-Z0-9_-]+)\\.com$")
 	ok := reg.MatchString(p.Person_email.String)
 	if !ok{
@@ -41,7 +54,7 @@ func (p *PersonInfo) AddtPersonDetail() error {
 		Mobile: p.Mobile,
 		Nick_name: p.Nick_name,
 	}
-	err := model.AddtPersonDetail(personInfo)
+	err = model.AddtPersonDetail(personInfo)
 	if err != nil{
 		err_info :=fmt.Sprintf("add ID:%d user detail_info failed, err:%s", p.ID, err)
 		config.Error(err_info)

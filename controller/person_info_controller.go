@@ -27,7 +27,7 @@ func AddPersonInfo(c *gin.Context)  {
 
 	if acquire_vCode != verifyCode {
 		config.Error("acquire verify code error: ",err)
-		res_obj.ErrCode = common.ERROR_ADD_USER_INFO_FAIL
+		res_obj.ErrCode = common.ERROR_GET_VERIFY_CODE_FAIL
 		res_obj.HttpCode = 400
 		res_obj.Data = err.Error()
 		res_obj.ApiFailedResponse(c)
@@ -47,7 +47,7 @@ func AddPersonInfo(c *gin.Context)  {
 
 	if err != nil{
 		config.Error(err)
-		res_obj.ErrCode = common.ERROR_GET_VERIFY_CODE_FAIL
+		res_obj.ErrCode = common.ERROR_ADD_USER_INFO_FAIL
 		res_obj.HttpCode = 500
 		res_obj.Data = err.Error()
 		res_obj.ApiFailedResponse(c)

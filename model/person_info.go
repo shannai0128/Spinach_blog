@@ -41,3 +41,13 @@ func EditPersonInfo(p PersonInfo) error {
 	}
 	return nil
 }
+
+func AcquireAllMobile() ([]sql.NullString, error) {
+	var res []sql.NullString
+	sqlstr := "select mobile from person_info;"
+	err := db.DB.Select(&res, sqlstr)
+	if err != nil{
+		return nil,err
+	}
+	return res, nil
+}

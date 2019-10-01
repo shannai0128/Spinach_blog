@@ -23,11 +23,16 @@ func main() {
 
 
 	router :=gin.Default()
-	router.GET("/login", func(c *gin.Context) {
-		c.JSON(200,"login index")
-	})
-	router.Use(middleware.JwtAuth())
 	router.Use(middleware.LimitIP())
+	router.GET("/login", func(c *gin.Context) {
+		c.JSON(200,"login page")
+	})
+	router.POST("/register", controller.Register)
+	router.Use(middleware.JwtAuth())
+
+	router.GET("/index", func(c *gin.Context) {
+		c.JSON(200,"index page")
+	})
 
 	atcGroup := router.Group("/article")
 	{
@@ -53,6 +58,10 @@ func main() {
 		detailGroup.POST("/new", controller.AddPersonInfo)
 		detailGroup.POST("/edit", controller.EditPersonInfo)
 		detailGroup.POST("/vc", controller.VerifyCode)
+	}
+	adminGroup := router.Group("/admin")
+	{
+		adminGroup.POST("/add", controller.AddNewPerson)
 	}
 
 	router.Run(":9000")

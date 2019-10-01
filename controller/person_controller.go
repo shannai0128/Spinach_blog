@@ -2,11 +2,13 @@ package controller
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/c479096292/Spinach_blog/common"
 	"github.com/c479096292/Spinach_blog/config"
 	"github.com/c479096292/Spinach_blog/service"
 	"github.com/c479096292/Spinach_blog/utils"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func GetPersonTotal(c *gin.Context) {
@@ -76,7 +78,6 @@ func AddNewPerson(c *gin.Context)  {
 	}
 	err := person.AddtNewPerson()
 
-	// TODO 注册登录
 	if err != nil{
 		config.Error(err)
 		res_obj.ErrCode = common.ERROR_ADD_USER_FAIL
@@ -87,6 +88,24 @@ func AddNewPerson(c *gin.Context)  {
 	}
 	res_obj.HttpCode = common.SUCCESS
 	res_obj.ApiResponse(c)
+}
+
+func Register(c * gin.Context)  {
+	AddNewPerson(c)
+	personName := c.PostForm("person_name")
+	passWord := c.PostForm("password")
+	md5Password := utils.EncodeMD5(passWord)
+	token := utils.GenerateToken(personName, md5Password)
+	// 生成全局唯一ID
+	worker, err:= utils.NewWorker(1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	uniqueID := worker.GetId()
+	int_uniqueID := strconv.Itoa(int(uniqueID))
+	c.Set("tokenID",int_uniqueID)
+	c.SetCookie(int_uniqueID,token,3600,"/","127.0.0.1",false,true)
 }
 
 func DelPerson(c *gin.Context)  {
