@@ -11,5 +11,6 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/onsi/ginkgo v1.10.1 // indirect
 	github.com/onsi/gomega v1.7.0 // indirect
+	github.com/swaggo/swag v1.6.3
 	google.golang.org/appengine v1.6.2 // indirect
 )

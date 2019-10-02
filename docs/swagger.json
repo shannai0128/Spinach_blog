@@ -1,0 +1,168 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "API Docs for Spinach_Blog v1",
+    "title": "Spinach_Blog - API文档",
+    "termsOfService": "Schemes: [http]",
+    "contact": {
+      "name": "Track",
+      "email": "cole0128@163.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/c479096292/Spinach_blog/blob/master/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/admin/users": {
+      "post": {
+        "description": "创建用户",
+        "tags": [
+          "user"
+        ],
+        "operationId": "创建用户"
+      }
+    },
+    "/admin/users/:uid": {
+      "get": {
+        "description": "获取某个用户信息",
+        "tags": [
+          "user"
+        ],
+        "operationId": "获取某个用户信息"
+      },
+      "put": {
+        "description": "修改用户信息",
+        "tags": [
+          "user"
+        ],
+        "operationId": "修改用户信息"
+      },
+      "delete": {
+        "description": "删除用户",
+        "tags": [
+          "user"
+        ],
+        "operationId": "删除用户"
+      }
+    },
+    "/admin/users/:uid/links": {
+      "get": {
+        "description": "获取用户所有友链",
+        "tags": [
+          "link"
+        ],
+        "operationId": "获取用户所有友链"
+      },
+      "post": {
+        "description": "添加友链",
+        "tags": [
+          "link"
+        ],
+        "operationId": "添加友链"
+      }
+    },
+    "/admin/users/:uid/links/:lid": {
+      "get": {
+        "description": "获取指定友链信息",
+        "tags": [
+          "link"
+        ],
+        "operationId": "获取指定友链信息"
+      },
+      "delete": {
+        "description": "删除友链",
+        "tags": [
+          "link"
+        ],
+        "operationId": "删除友链"
+      }
+    },
+    "/article/paged": {
+      "post": {
+        "description": "获取分页文章",
+        "tags": [
+          "user"
+        ],
+        "operationId": "获取分页文章",
+        "parameters": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "csv",
+            "description": "tags to filter by",
+            "name": "tags",
+            "in": "query"
+          }
+        ]
+      }
+    },
+    "/v1/admin/extends": {
+      "get": {
+        "description": "获取网站统计信息",
+        "tags": [
+          "extend"
+        ],
+        "operationId": "获取网站统计信息"
+      },
+      "post": {
+        "description": "传入文章url采集csdn文章",
+        "tags": [
+          "extend"
+        ],
+        "operationId": "传入文章url采集csdn文章"
+      }
+    },
+    "/v1/admin/sessions": {
+      "post": {
+        "description": "管理员登录",
+        "tags": [
+          "session"
+        ],
+        "operationId": "管理员登录"
+      }
+    },
+    "/v1/admin/sessions/:uid": {
+      "delete": {
+        "description": "退出登录",
+        "tags": [
+          "session"
+        ],
+        "operationId": "退出登录"
+      }
+    },
+    "/v1/admin/sessions/upload": {
+      "post": {
+        "description": "管理员登录上传图片信息",
+        "tags": [
+          "session"
+        ],
+        "operationId": "管理员登录上传图片信息"
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "type": "token",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearer": [
+        "[]"
+      ]
+    }
+  ]
+}
