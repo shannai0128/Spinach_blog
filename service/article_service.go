@@ -25,7 +25,8 @@ type Article struct {
 }
 
 func (a *Article) Count() (int) {
-	return model.GetTableTotal(a.Name)
+	var article model.Article
+	return article.GetTableTotal()
 }
 
 //  分页

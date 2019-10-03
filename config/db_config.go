@@ -6,10 +6,11 @@ import (
 )
 
 type DBConnect struct {
+	DBDriver string
 	DBName string
 	DBUser string
 	DBPasswd string
-
+	PREFIX string
 }
 
 type RedisConnect struct {
@@ -20,9 +21,11 @@ type RedisConnect struct {
 
 func InitDBConnect() *DBConnect {
 	var db DBConnect
+	db.DBDriver = os.Getenv("DBDRIVER")
 	db.DBName = os.Getenv("DBNAME")
 	db.DBUser = os.Getenv("DBUSER")
 	db.DBPasswd = os.Getenv("DBPASSWD")
+	db.PREFIX = "blog_"
 	return &db
 }
 

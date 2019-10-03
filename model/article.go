@@ -2,30 +2,61 @@ package model
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/c479096292/Spinach_blog/config"
 	"github.com/c479096292/Spinach_blog/db"
+	"github.com/jinzhu/gorm"
+	"time"
 )
 
 type Article struct {
-	ID 				uint `json:"aid"`
-	BaseModel
-	//DeletedAt      *time.Time `sql:"index" json:"-"`
-	Person_name         string     `json:"person_name"`
-	Category_id 	   uint       `json:"category_id"`
-	Title          string     `json:"title"`
-	Summary		   string	   `json:"summary"`
-	Content        string     `json:"content"`
-	View_count     int        `json:"view_count"`
-	Status         int  	  `json:"status"` // 0 正在审核, 1 过审  2 未过审
-	Origin         int        `json:"origin"` //是否原创 1原创 0转载
-	Violat_reason  sql.NullString     `json:"violat_reason"`
+	ID    uint  `gorm:"primary_key"`
+	Person_name         string     `gorm:"type:varchar(256);not null"`
+	Category_id 	   uint       `gorm:"type:bigint(20);not null;unique_index" json:"category_id"`
+	Title          string     `gorm:"type:varchar(255);not null"`
+	Summary		   string	   `gorm:"type:varchar(255);not null"`
+	Content        string     `gorm:"type:longtext;not null"`
+	View_count     int        `gorm:"type:int;index:idx_view_count"`
+	Status         int  	  `gorm:"type:int;default:0"` // 0 正在审核, 1 过审  2 未过审
+	Origin         int        `gorm:"type:int"` //是否原创 1原创 0转载
+	Violat_reason  sql.NullString     `gorm:"type:text"`
 	//Comment_id       string     `json:"comment_id"`
 	//Comment_count  int    	  `json:"comment_count"`
-	Praise         int		  `json:"praise_count"` // 点赞
+	CreateTime     time.Time  `gorm:"not null" json:"create_time"`
+	UpdateTime     time.Time  `gorm:"not null" json:"update_time"`
+	Praise         int		  `gorm:"type:bigint(10);default:0"` // 点赞
+}
+
+func (a *Article) BeforeUpdate() (err error) {
+	if (len(a.Title) > 18 ) {
+		err = errors.New("article title is already greater than 18 character")
+		config.Warn(err)
+	}
+	return
+}
+
+func (a *Article) db() *gorm.DB {
+	return db.GetOrm()
 }
 
 // 获取表数据量
+func (a *Article) GetTableTotal() int {
+	var v interface{}
+	err := a.db().Find(&v,&Article{}).Error
+	if err !=nil {
+		err_info :=fmt.Sprintf("Get article Total failed, err:%v\n", err)
+		config.Error(err_info)
+	}
+	val, ok := v.(int);
+	if  !ok {
+		err_info :="result is not type of int"
+		config.Error(err_info)
+		panic(err_info)
+	}
+	return val
+}
+
 func GetTableTotal(tableName string) (total int) {
 	sqlstr := "select count(*) from " + tableName
 	err := db.DB.Get(&total, sqlstr)
@@ -78,36 +109,36 @@ func FindArticleByTitle(title string) ([]*Article, error) {
 }
 
 // 添加新文章
-func InsertNewArticle(a Article) (error) {
-	sqlstr := "insert into article(category_id,content,title,view_count,person_name,summary,origin) value(?,?,?,?,?,?,?);"
-	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin)
-	if err != nil{
-		err_info :=fmt.Sprintf("create new article failed, err:%s\n", err)
-		config.Error(err_info)
-		panic(err)
-	}
-	return nil
-}
-
-// 修改文章
-func EditArticle(a Article) error {
-	sqlstr := "update article set category_id=?,content=?,title=?,view_count=?,person_name=?,summary=?,origin=? where id=?;"
-	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin, a.ID)
-	if err != nil{
-		err_info :=fmt.Sprintf("edit the article failed, err:%s\n", err)
-		config.Error(err_info)
-		panic(err)
-	}
-	return nil
-}
-
-func DelArticle(aid int) error {
-	sqlstr := "delete from article where id=?;"
-	_ , err := db.DB.Exec(sqlstr, aid)
-	if err != nil{
-		err_info :=fmt.Sprintf("delete article failed, err:%s\n", err)
-		config.Error(err_info)
-		panic(err)
-	}
-	return nil
-}
+//func InsertNewArticle(a Article) (error) {
+//	sqlstr := "insert into article(category_id,content,title,view_count,person_name,summary,origin) value(?,?,?,?,?,?,?);"
+//	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin)
+//	if err != nil{
+//		err_info :=fmt.Sprintf("create new article failed, err:%s\n", err)
+//		config.Error(err_info)
+//		panic(err)
+//	}
+//	return nil
+//}
+//
+//// 修改文章
+//func EditArticle(a Article) error {
+//	sqlstr := "update article set category_id=?,content=?,title=?,view_count=?,person_name=?,summary=?,origin=? where id=?;"
+//	_ , err := db.DB.Exec(sqlstr, a.Category_id, a.Content, a.Title,a.View_count, a.Person_name, a.Summary, a.Origin, a.ID)
+//	if err != nil{
+//		err_info :=fmt.Sprintf("edit the article failed, err:%s\n", err)
+//		config.Error(err_info)
+//		panic(err)
+//	}
+//	return nil
+//}
+//
+//func DelArticle(aid int) error {
+//	sqlstr := "delete from article where id=?;"
+//	_ , err := db.DB.Exec(sqlstr, aid)
+//	if err != nil{
+//		err_info :=fmt.Sprintf("delete article failed, err:%s\n", err)
+//		config.Error(err_info)
+//		panic(err)
+//	}
+//	return nil
+//}

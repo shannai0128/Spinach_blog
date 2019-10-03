@@ -10,7 +10,7 @@ import (
 
 
 func GetArticleTotal(c *gin.Context) {
-		article := service.Article{Name:"article"}
+		article := service.Article{}
 		articles_count := article.Count()
 		res_obj := common.Response{HttpCode:common.SUCCESS,Data:articles_count}
 		res_obj.ApiResponse(c)
