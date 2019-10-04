@@ -29,9 +29,10 @@ func (a *Article) Count() (int) {
 	return article.GetTableTotal()
 }
 
-//  分页
+//  分页model
 func (a *Article) ArticlesPaged(pageNum int, pageSize int) ([]*model.Article)  {
-	articleObj, err := model.GetArticlesPage(pageNum, pageSize)
+	var article model.Article
+	articleObj, err := article.GetArticlesPage(pageNum, pageSize)
 	if err != nil{
 		config.Error(fmt.Sprintf("query article paged error: %s\n",err))
 	}
@@ -40,7 +41,8 @@ func (a *Article) ArticlesPaged(pageNum int, pageSize int) ([]*model.Article)  {
 
 // 获取指定用户全部文章
 func (a *Article) GetArticlesByPersonID(id int) ([]*model.Article)  {
-	articleObj, err := model.GetArticlesByPersonID(id)
+	var article model.Article
+	articleObj, err := article.GetArticlesByPersonID(id)
 	if err != nil{
 		config.Error(fmt.Sprintf("acquire user articles error: %s\n",err))
 	}
@@ -49,33 +51,25 @@ func (a *Article) GetArticlesByPersonID(id int) ([]*model.Article)  {
 
 // 查找指定标题文章
 func (a *Article) FindArticleByTitle(title string) (interface{})  {
+	var article model.Article
 	reg, _ :=regexp.Compile("^[a-zA-Z0-9\u4e00-\u9fa5]{2,16}$")
 	ok := reg.MatchString(title)
 	if !ok{
 		return "please input a valid character"
 	}
-	articleObj, _ := model.FindArticleByTitle(title)
+	articleObj, _ := article.FindArticleByTitle(title)
 	return articleObj
 }
 
 // 新建文章
 func (a *Article) InsertNewArticle() error {
-	//article := map[string]interface{}{
-	//	"category_id":          a.Category_id,
-	//	"content":           a.Content,
-	//	"title":            a.Title,
-	//	"view_count":         a.View_count,
-	//	"person_name":      a.Person_name,
-	//	"summary": 		   a.Summary,
-	//	"origin":           a.Origin,
-	//	"praise":			a.Praise,
-	//}
+	//var article model.Article
 	for _, Sensitive := range config.ConfObj.SensitiveWords{
 		if a.Title == Sensitive{
 			return errors.New("含有敏感词汇,请重新检查")
 		}
 	}
-	article := model.Article{
+	svcObj := model.Article{
 		Category_id:a.Category_id,
 		Content:a.Content,
 		Title:a.Title,
@@ -84,16 +78,15 @@ func (a *Article) InsertNewArticle() error {
 		Summary:a.Summary,
 		Origin:a.Origin,
 	}
-	err := model.InsertNewArticle(article)
-	if err !=nil {
-		return err
-	}
+	svcObj.InsertNewArticle()
+
 	return nil
 }
 
 // 修改文章
 func (a *Article) EditArticle() error {
-	article := model.Article{
+	//var article model.Article
+	svcObj := model.Article{
 		ID: a.ID,
 		Category_id:a.Category_id,
 		Content:a.Content,
@@ -103,18 +96,16 @@ func (a *Article) EditArticle() error {
 		Summary:a.Summary,
 		Origin:a.Origin,
 	}
-	err := model.EditArticle(article)
-	if err !=nil {
-		return err
-	}
+	svcObj.EditArticle()
+
 	return nil
 }
 
 // 删除文章
-func (a *Article) DelArticle(aid int) error {
-	err := model.DelArticle(aid)
-	if err !=nil {
-		return err
+func (a *Article) DelArticle(aid uint) error {
+	svcObj := model.Article{
+		ID:aid,
 	}
+	svcObj.DelArticle()
 	return nil
 }

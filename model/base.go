@@ -11,8 +11,8 @@ import (
 //}
 type BaseModel struct {
 	ID        uint      `gorm:"primary_key"` // 自增
-	CreatedAt time.Time `json:"-"`
-	UpdatedAt time.Time `json:"-"`
+	CreatedAt time.Time `gorm:"not null" json:"-"`
+	UpdatedAt time.Time `gorm:"not null" json:"-"`
 }
 
 type Where func(*gorm.DB) *gorm.DB

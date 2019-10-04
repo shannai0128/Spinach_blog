@@ -126,7 +126,7 @@ func EditArticle() gin.HandlerFunc {
 			Summary: Summary,
 			Origin: int_Origin,
 		}
-		err := article.InsertNewArticle()
+		err := article.EditArticle()
 		res_obj := common.Response{}
 		if err != nil{
 			config.Error(err)
@@ -143,8 +143,9 @@ func EditArticle() gin.HandlerFunc {
 func DelArticle(c *gin.Context)  {
 	aid := c.PostForm("aid")
 	int_aid := utils.ChangeAtoi(aid)
+	u_id := uint(int_aid)
 	article := service.Article{}
-	err := article.DelArticle(int_aid)
+	err := article.DelArticle(u_id)
 	res_obj := common.Response{}
 	if err != nil{
 		config.Error(err)

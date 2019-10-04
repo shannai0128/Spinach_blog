@@ -22,7 +22,10 @@ func (app *App) InitConfig() {
 
 	go utils.CheckLogSize(file) // 日志监控
 
-	db.InitDB()
+	//db.InitDB()
 	db.InitRedis()
+
+
+
 }
 

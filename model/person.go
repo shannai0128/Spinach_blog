@@ -14,9 +14,9 @@ type Person struct {
 	Password     string `gorm:"type:varchar(64);not null"`        //sha1
 	Gender		 int `gorm:"type:tinyint(4);not null;default:0"`
 	Login_ip      sql.NullString `gorm:"type:varchar(20)"`
-	Login_time    time.Time  `gorm:"not null"`
-	CreateTime     time.Time  `gorm:"not null" json:"create_time"`
-	UpdateTime     time.Time  `gorm:"not null" json:"update_time"`
+	Login_time    time.Time
+	CreateTime     time.Time
+	UpdateTime     time.Time
 	Is_active     int      `gorm:"type:int;default:0"` //0禁用 1可用
 
 }
