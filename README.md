@@ -42,6 +42,13 @@ SensitiveWords = xx;xx;xx;
 ...
 ```
 
+### How To Run
+```
+$ cd $GOPATH/src/Spinach_blog
+then
+you should be based on to set environment variable at Spinach_blog/config/db_config.go
+```
+
 ### Run
 ```
 $ cd $GOPATH/src/Spinach_blog
