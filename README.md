@@ -7,8 +7,7 @@ An example blog of gin framework
 ```
 $ go get github.com/c479096292/Spinach_blog
 ```
-
-## How to run
+[Download v1.0.0](https://github.com/c479096292/Spinach_blog/releases)
 
 
 ### Required
@@ -50,15 +49,15 @@ $ cd $GOPATH/src/Spinach_blog
 $ go run main.go 
 ```
 
-Swagger doc
-
-[image](https://i.imgur.com/bVRLTP4.jpg)
 
 ## Features
-
+[ORM_VERSION]
 - Swagger
 - logging
 - Jwt-go
 - Gin
 - sqlx
+- mysql
 - Redis
+
+[ORM_VERSION](https://github.com/c479096292/Spinach_blog/tree/feature)
