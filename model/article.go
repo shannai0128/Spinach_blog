@@ -115,7 +115,7 @@ func (a *Article) DelArticle() {
 
 	err := a.db().Delete(&a).Error
 	if err != nil{
-		err_info :=fmt.Sprintf("create new article failed, err:%s\n",err)
+		err_info :=fmt.Sprintf("delete article failed, err:%s\n",err)
 		config.Error(err_info)
 		panic(err)
 	}

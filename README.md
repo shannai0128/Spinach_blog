@@ -1,14 +1,14 @@
-# Spinach_blog
+# Spinach_blog(ORM version)
 
 An example blog of gin framework 
 
 
 ## Installation
 ```
-$ go get github.com/c479096292/Spinach_blog
+$ go get github.com/c479096292/Spinach_blog/tree/feature
 ```
 
-## How to run
+Or directly [Download v1.1.0](https://github.com/c479096292/Spinach_blog/releases)
 
 
 ### Required
@@ -18,7 +18,7 @@ $ go get github.com/c479096292/Spinach_blog
 
 ### Ready
 
-Create a **blog database** and import [SQL](https://github.com/c479096292/Spinach_blog/blob/master/blog.sql)
+Create a **blog database**
 
 ### Conf
 
@@ -43,22 +43,28 @@ SensitiveWords = xx;xx;xx;
 ...
 ```
 
-### Run
+## How to run
 ```
 $ cd $GOPATH/src/Spinach_blog
+then
+you should be based on to set environment variable at Spinach_blog/config/db_config.go
+```
 
+### Run
+```
 $ go run main.go 
 ```
 
-Swagger doc
 
-[image](https://i.imgur.com/bVRLTP4.jpg)
 
 ## Features
 
+- gorm
 - Swagger
 - logging
 - Jwt-go
 - Gin
-- sqlx
+- mysql
 - Redis
+
+[Basic version](https://github.com/c479096292/Spinach_blog/tree/master)

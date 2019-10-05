@@ -3,6 +3,10 @@ package model
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"github.com/c479096292/Spinach_blog/config"
+	"github.com/c479096292/Spinach_blog/db"
+	"github.com/jinzhu/gorm"
 	"time"
 )
 
@@ -21,90 +25,88 @@ type Person struct {
 
 }
 
+func (p *Person) db() *gorm.DB {
+	return db.GetOrm()
+}
+
 func (p *Person) BeforeUpdate() (err error) {
 	if (len(p.Id_card) != 18 ) {
-		err = errors.New("user id is already greater than 1000")
+		err = errors.New("id card greater than 18 character")
 	}
 	return
 }
 
-//func GetPersonPage(pageNum int, pageSize int) ([]*Person, error) {
-//	var persons []*Person
-//	args1 := (pageNum-1) * pageSize
-//	sqlstr := "select * from person limit ?,?;"
-//	err := db.DB.Select(&persons,sqlstr,args1, pageSize)
-//	if err != nil{
-//		err_info :=fmt.Sprintf("Get person page failed, err:%s\n", err)
-//		config.Error(err_info)
-//		panic(err)
-//	}
-//	return persons, nil
-//}
+func (p *Person) GetTableTotal() int {
+	var v int
+	err := p.db().Model(&Article{}).Count(&v).Error
+	if err !=nil {
+		err_info :=fmt.Sprintf("Get article Total failed, err:%v\n", err)
+		config.Error(err_info)
+	}
+	fmt.Println(v)
+	return v
+}
 
-//func FindPersonByID(id int) (Person, error) {
-//	var persons Person
-//	sqlstr := "select * from person where id=?;"
-//	err := db.DB.Get(&persons,sqlstr, id)
-//	if err != nil{
-//		err_info :=fmt.Sprintf("find the id: %d person failed, err:%s\n", id, err)
-//		config.Error(err_info)
-//		//panic(err)
-//	}
-//	return persons, nil
-//}
-//
-//func AddtPersonInfo(p Person) (error) {
-//	sqlstr := "insert into person(person_name,id_card,password,gender,login_ip) value(?,?,?,?,?);"
-//	result , err := db.DB.Exec(sqlstr, p.Person_name,p.Id_card,p.Password,p.Gender,p.Login_ip)
-//	if err != nil{
-//		err_info :=fmt.Sprintf("add new person failed, err:%s\n", err)
-//		config.Error(err_info)
-//		panic(err)
-//	}
-//	affect, _ := result.RowsAffected()
-//	if affect == 0{
-//		err_info :=fmt.Sprintf("add new person failed, err:%s", err)
-//		config.Error(err_info)
-//		return errors.New(err_info)
-//	}
-//	return nil
-//}
+func (p *Person) GetArticlesPage(pageNum int, pageSize int) ([]*Person, error) {
+	var persons []*Person
+	args1 := (pageNum-1) * pageSize
+	err := p.db().Limit(pageSize).Offset(args1).Find(&persons).Error
+	if err != nil {
+		err_info :=fmt.Sprintf("Get person page failed, err:%s\n", err.Error())
+		config.Error(err_info)
+		panic(err_info)
+	}
+	return persons, nil
+}
+
+func (p *Person) FindPersonByID(id int) (Person, error) {
+	var persons Person
+	err := p.db().Where("id = ?",id).First(&persons).Error
+	if err != nil{
+		err_info :=fmt.Sprintf("find the id: %d person failed, err:%s\n", id, err)
+		config.Error(err_info)
+		//panic(err)
+	}
+	return persons, nil
+}
+
+func (p *Person) AddtPersonInfo() (error) {
+
+	err := p.db().Create(&p).Error
+	if err != nil{
+		err_info :=fmt.Sprintf("create new person failed, err:%s\n",err)
+		config.Error(err_info)
+		return err
+	}
+	return nil
+}
 
 
-//func DelPersonByID(id int) error {
-//	sqlstr := "delete from person where id=?;"
-//	result, err := db.DB.Exec(sqlstr, id)
-//	if err != nil{
-//		err_info :=fmt.Sprintf("delete person failed, err:%s\n", err)
-//		config.Error(err_info)
-//		panic(err)
-//	}
-//	affect, _ := result.RowsAffected()
-//	if affect == 0{
-//		err_info :=fmt.Sprintf("The id to delete does not exist, plase enter again")
-//		config.Error(err_info)
-//		return errors.New(err_info)
-//	}
-//	return nil
-//}
-//
-//func AcquirePassword(id uint) (string, error) {
-//	sqlstr := "select password from person where id=?"
-//	var oldPassword string
-//	err := db.DB.Get(&oldPassword, sqlstr,id)
-//	if err != nil{
-//		err_info :=fmt.Sprintf("Unknow error happend err:%s\n", err)
-//		config.Error(err_info)
-//		panic(err)
-//	}
-//	return oldPassword, nil
-//}
-//
-//func UpdatePassword(id uint, newPassword string) error {
-//	sqlstr := "update person set password=? where id=?"
-//	_, err := db.DB.Exec(sqlstr,newPassword, id)
-//	if err != nil{
-//		return errors.New("update password error")
-//	}
-//	return nil
-//}
+func (p *Person) DelPersonByID() error {
+	err := p.db().Delete(&p).Error
+	if err != nil{
+		err_info :=fmt.Sprintf("create person failed, err:%s\n",err)
+		config.Error(err_info)
+		return err
+	}
+	return nil
+}
+
+func (p *Person) AcquirePassword(id uint) (string, error) {
+	var personObj Person
+	err := p.db().Where("id = ?", id).Select("person_name").Find(&personObj).Error
+	if err != nil{
+		err_info :=fmt.Sprintf("Unknow error happend err:%s\n", err)
+		config.Error(err_info)
+		return "", err
+	}
+	return personObj.Password, nil
+}
+
+func (p *Person) UpdatePassword() error {
+	err := p.db().Model(&p).Where("id = ?",p.ID).Updates(&p).Error
+	if err != nil{
+		return errors.New("update password error")
+	}
+	return nil
+}

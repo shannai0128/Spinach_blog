@@ -35,7 +35,6 @@ func init() {
 	orm.DB().SetMaxOpenConns(100)
 
 	fmt.Println("connect mysql success!")
-
 }
 
 func GetOrm() *gorm.DB {
@@ -44,19 +43,15 @@ func GetOrm() *gorm.DB {
 
 func updateTimeStampForCreateCallback(scope *gorm.Scope) {
 	if !scope.HasError() {
-		fmt.Println("Create time")
-		nowTime := time.Now().Format("2006-01-02 15:04:05")
-		if createTimeField, ok := scope.FieldByName("create_time"); ok {
-			fmt.Println("Create time")
+		nowTime := time.Now()
+		if createTimeField, ok := scope.FieldByName("CreateTime"); ok {
 			if createTimeField.IsBlank {
-				fmt.Println("Create time")
 				createTimeField.Set(nowTime)
 			}
 		}
 
-		if updatedAtField, ok := scope.FieldByName("update_time"); ok {
+		if updatedAtField, ok := scope.FieldByName("CreatedAt"); ok {
 			if updatedAtField.IsBlank {
-				fmt.Println("update time")
 				updatedAtField.Set(nowTime)
 			}
 		}
