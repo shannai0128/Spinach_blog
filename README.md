@@ -32,9 +32,12 @@ JwtSecret = 233
 LogSavePath = logs/
 LogSaveName = log
 LogFileExt = log
+
+# bit
 LogMaxSize = 5242880
+# Nanosecond
 IpBlackExpire = 60000000000
-SecretKey = jeqwijojasofsan8394ty
+SecretKey = 
 
 [server]
 # debug or release
@@ -46,19 +49,28 @@ SensitiveWords = xx;xx;xx;
 ## How to run
 ```
 $ cd $GOPATH/src/Spinach_blog
-then
-you should be based on to set environment variable at Spinach_blog/config/db_config.go
+$ touch run.sh
+Copy the following to run.sh
+export DBDRIVER=mysql
+export DBNAME=spinachBlog
+export DBUSER=
+export DBPASSWD=
+
+export REDIS_ADDR=127.0.0.1:6379
+export REDIS_PASSWORD=
+export REDIS_DB=1
+go run main.go
 ```
 
 ### Run
 ```
-$ go run main.go 
+sh run.sh
 ```
 
 
 
 ## Features
-
+[ORM_VERSION]
 - gorm
 - Swagger
 - logging
