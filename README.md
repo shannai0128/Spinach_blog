@@ -71,7 +71,7 @@ $ sh run.sh
 
 
 ## Features
-[ORM_VERSION]
+[BASIC_VERSION]
 - Swagger
 - logging
 - Jwt-go
